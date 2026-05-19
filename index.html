@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAWA Cashier Training</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8C61;
+            --primary-dark: #E55525;
+            --secondary: #004E89;
+            --accent: #FFC857;
+            --bg-main: #FFF8F0;
+            --bg-card: #FFFFFF;
+            --text-dark: #2D3142;
+            --text-gray: #666;
+            --shadow: 0 8px 30px rgba(0,0,0,0.12);
+            --shadow-hover: 0 12px 40px rgba(0,0,0,0.16);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #FFF8F0 0%, #FFE5CC 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            font-weight: 500;
+        }
+
+        /* User Info Form */
+        .user-info-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .user-info-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            margin: 30px 0;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 20px;
+            transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+            box-shadow: 0 0 10px rgba(255,107,53,0.3);
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+            font-weight: 600;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease backwards;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 360px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            flex: 1;
+        }
+
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transform: rotateY(180deg);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            letter-spacing: -0.01em;
+        }
+
+        .card-content {
+            color: var(--text-gray);
+            line-height: 1.8;
+            font-size: 0.95rem;
+            flex: 1;
+            overflow-y: auto;
+            max-height: 280px;
+        }
+
+        .card-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .card-content li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 12px;
+        }
+
+        .card-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .card-content strong {
+            color: var(--text-dark);
+            font-weight: 700;
+        }
+
+        .card-content code {
+            background: #FFF8F0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .flip-hint {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+            animation: fadeInUp 0.8s ease backwards;
+            animation-delay: 0.4s;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--secondary) 0%, #003d6e 100%);
+            color: white;
+            padding: 18px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        th:first-child {
+            border-top-left-radius: 12px;
+        }
+
+        th:last-child {
+            border-top-right-radius: 12px;
+        }
+
+        td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #f0f0f0;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: #FFF8F0;
+        }
+
+        .completed-checkmark {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0);
+            transition: all 0.3s ease;
+        }
+
+        .card.completed .completed-checkmark {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Timer and Submit Section */
+        .bottom-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-top: 30px;
+            text-align: center;
+            animation: fadeInUp 0.8s ease backwards;
+            animation-delay: 0.5s;
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .timer-label {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .submit-btn {
+            padding: 18px 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255,107,53,0.3);
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,107,53,0.4);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: linear-gradient(135deg, #ccc 0%, #aaa 100%);
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.6;
+        }
+
+        .submit-requirements {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: var(--text-gray);
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .requirement-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .requirement-item.met {
+            color: #4CAF50;
+        }
+
+        .requirement-item.not-met {
+            color: #ff6b6b;
+        }
+
+        .reset-btn {
+            display: inline-block;
+            margin: 20px 10px 0;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #666 0%, #444 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .reset-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            animation: fadeInUp 0.5s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 12px;
+            }
+
+            .submit-requirements {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .timer-display {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🥯 PAWA Cashier Manual</h1>
+            <p class="subtitle">Click cards to reveal details · Track your learning progress</p>
+        </header>
+
+        <!-- User Info Form -->
+        <div class="user-info-card">
+            <h3>📝 Staff Information</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="staffName">Staff Name *</label>
+                    <input type="text" id="staffName" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="trainingDate">Training Date</label>
+                    <input type="date" id="trainingDate" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Completed: 0 / 6 Modules</div>
+
+        <div class="cards-grid">
+            <!-- Card 1: Membership System -->
+            <div class="card" style="animation-delay: 0.1s;">
+                <div class="completed-checkmark">✓</div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">👥</div>
+                        <h2 class="card-title">Membership</h2>
+                        <p class="card-content">How to help customers join and use member benefits</p>
+                        <div class="flip-hint">👆 Click for details</div>
+                    </div>
+                    <div class="card-back">
+                        <h2 class="card-title">Membership Guide</h2>
+                        <div class="card-content">
+                            <strong>How to Join:</strong>
+                            <ul>
+                                <li>Use phone camera to scan QR code</li>
+                                <li>Send the message</li>
+                                <li>Customer will receive membership card</li>
+                            </ul>
+                            <strong>Member Benefits:</strong>
+                            <ul>
+                                <li>One-time 20% discount welcome voucher</li>
+                                <li>Earn points to redeem $5 cashback</li>
+                                <li>Exclusive vouchers each month</li>
+                                <li>5% birthday discount all month long</li>
+                            </ul>
+                        </div>
+                        <div class="flip-hint">👆 Click to flip back</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Voucher Usage -->
+            <div class="card" style="animation-delay: 0.2s;">
+                <div class="completed-checkmark">✓</div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">🎫</div>
+                        <h2 class="card-title">Vouchers</h2>
+                        <p class="card-content">How to apply different types of vouchers</p>
+                        <div class="flip-hint">👆 Click for details</div>
+                    </div>
+                    <div class="card-back">
+                        <h2 class="card-title">Voucher Instructions</h2>
+                        <div class="card-content">
+                            <ul>
+                                <li><strong>20% Welcome Voucher:</strong> Input code directly: <code>wc26</code></li>
+                                <li><strong>Other Discounts:</strong> Request customers to claim vouchers first, then input voucher code or scan barcode</li>
+                                <li><strong>5% Birthday Discount:</strong> Customers need to edit profile, then will receive voucher automatically, claim it—it's reusable</li>
+                                <li><strong>Product Discount Voucher:</strong> The specific product must be added to the cart</li>
+                            </ul>
+                        </div>
+                        <div class="flip-hint">👆 Click to flip back</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Payment Process -->
+            <div class="card" style="animation-delay: 0.3s;">
+                <div class="completed-checkmark">✓</div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">💳</div>
+                        <h2 class="card-title">Payment Process</h2>
+                        <p class="card-content">Standard checkout procedures and tips</p>
+                        <div class="flip-hint">👆 Click for details</div>
+                    </div>
+                    <div class="card-back">
+                        <h2 class="card-title">Payment Process</h2>
+                        <div class="card-content">
+                            <ul>
+                                <li><strong>Greet:</strong> Greet customers warmly, and before checkout, ask if they are members</li>
+                                <li><strong>Verify:</strong> Accurately verify quantity and price</li>
+                                <li><strong>Payment:</strong> Select the payment method on the POS machine according to the actual payment method</li>
+                                <li><strong>payWave:</strong> Make sure to confirm that the transaction is successful on the payment machine to avoid missed orders. Keep terminal machine charged</li>
+                                <li><strong>Shift Change:</strong> When leaving the POS, be sure to log out of your account and only log in with your own username and password</li>
+                            </ul>
+                        </div>
+                        <div class="flip-hint">👆 Click to flip back</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Packing Tips -->
+            <div class="card" style="animation-delay: 0.4s;">
+                <div class="completed-checkmark">✓</div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">🛍️</div>
+                        <h2 class="card-title">Packing Tips</h2>
+                        <p class="card-content">Choose right bag based on quantity & temperature</p>
+                        <div class="flip-hint">👆 Click for details</div>
+                    </div>
+                    <div class="card-back">
+                        <h2 class="card-title">Packing Standards</h2>
+                        <div class="card-content">
+                            <ul>
+                                <li><strong>4 bagels or below:</strong> Use small bag</li>
+                                <li><strong>5 bagels or above:</strong> Use big bag</li>
+                                <li><strong>⚠️ Important:</strong> Hot/warm breads must NOT be sealed</li>
+                            </ul>
+                        </div>
+                        <div class="flip-hint">👆 Click to flip back</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Storage & Reheating -->
+            <div class="card" style="animation-delay: 0.5s;">
+                <div class="completed-checkmark">✓</div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">🍞</div>
+                        <h2 class="card-title">Storage & Reheat</h2>
+                        <p class="card-content">How to store and reheat bagels & sourdough</p>
+                        <div class="flip-hint">👆 Click for details</div>
+                    </div>
+                    <div class="card-back">
+                        <h2 class="card-title">Storage & Reheating</h2>
+                        <div class="card-content">
+                            <strong>Storage Methods:</strong>
+                            <ul>
+                                <li>Room temperature (air-conditioned environment below 25°C): 1-2 days</li>
+                                <li>Freeze below -18°C for best freshness: 10-15 days</li>
+                                <li>As our breads are made with minimal preservatives, freezing is recommended if not consumed within the same or next day</li>
+                            </ul>
+                            <strong>Reheating Options:</strong>
+                            <ul>
+                                <li><strong>Option 1 - Oven/Air Fryer (Recommended):</strong> Take frozen bread out → Lightly spray or sprinkle water on surface → Heat at 180-200°C for 5-6 minutes until warm and crispy outside</li>
+                                <li><strong>Option 2 - Steaming:</strong> Place bread directly into steamer → Steam for 10-15 minutes until soft and warm</li>
+                            </ul>
+                        </div>
+                        <div class="flip-hint">👆 Click to flip back</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Special Accounts -->
+            <div class="card" style="animation-delay: 0.6s;">
+                <div class="completed-checkmark">✓</div>
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-icon">🔐</div>
+                        <h2 class="card-title">Special Accounts</h2>
+                        <p class="card-content">Internal accounts and special discount codes</p>
+                        <div class="flip-hint">👆 Click for details</div>
+                    </div>
+                    <div class="card-back">
+                        <h2 class="card-title">Account Reference</h2>
+                        <div class="card-content">
+                            <ul>
+                                <li><strong>00000000:</strong> Staff meal (dine-in only)</li>
+                                <li><strong>10000000:</strong> StarVista corporate 10% discount</li>
+                                <li><strong>33333333:</strong> Waste account</li>
+                                <li><strong>22222222:</strong> Advertise test</li>
+                                <li><strong>Staff Purchase:</strong> Use staff phone number (member registered) + 20% discount</li>
+                            </ul>
+                        </div>
+                        <div class="flip-hint">👆 Click to flip back</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Special Accounts Table -->
+        <div class="table-card">
+            <h2 class="card-title" style="margin-bottom: 20px;">📋 Special Accounts Quick Reference</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account Name</th>
+                        <th>Account Number</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>PAWA Staff Meal</strong></td>
+                        <td>00000000</td>
+                        <td>Only valid for dine-in</td>
+                    </tr>
+                    <tr>
+                        <td><strong>StarVista Corporate</strong></td>
+                        <td>10000000</td>
+                        <td>10% discount, only applicable for SV</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Waste</strong></td>
+                        <td>33333333</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PAWA Staff Purchase</strong></td>
+                        <td>Staff's phone number (member registered)</td>
+                        <td>20% discount</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Advertise Test</strong></td>
+                        <td>22222222</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Timer and Submit Section -->
+        <div class="bottom-section">
+            <div class="timer-display" id="timerDisplay">00:00:00</div>
+            <div class="timer-label">Study Time</div>
+            
+            <div class="submit-requirements">
+                <span class="requirement-item" id="req-cards">
+                    <span id="cards-status">○</span> All 6 modules completed
+                </span>
+                <span class="requirement-item" id="req-time">
+                    <span id="time-status">○</span> Minimum 6 minutes study time
+                </span>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" disabled>Complete & Submit</button>
+            <button class="reset-btn" onclick="resetProgress()">🔄 Reset Progress</button>
+
+            <div class="success-message" id="successMessage">
+                ✅ Training completed successfully! Your record has been submitted.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let completedCards = new Set();
+        const totalCards = 6;
+        let startTime = Date.now();
+        let timerInterval;
+
+        // Set default date to today
+        document.getElementById('trainingDate').valueAsDate = new Date();
+
+        // Load saved progress
+        function loadProgress() {
+            const saved = localStorage.getItem('cashierProgressEN');
+            if (saved) {
+                completedCards = new Set(JSON.parse(saved));
+                completedCards.forEach(index => {
+                    document.querySelectorAll('.card')[index].classList.add('completed');
+                });
+                updateProgress();
+            }
+        }
+
+        // Save progress
+        function saveProgress() {
+            localStorage.setItem('cashierProgressEN', JSON.stringify([...completedCards]));
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const percentage = (completedCards.size / totalCards) * 100;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = 
+                `Completed: ${completedCards.size} / ${totalCards} Modules`;
+            
+            updateSubmitButton();
+        }
+
+        // Timer function
+        function updateTimer() {
+            const elapsed = Date.now() - startTime;
+            const seconds = Math.floor(elapsed / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+
+            const displayHours = String(hours).padStart(2, '0');
+            const displayMinutes = String(minutes % 60).padStart(2, '0');
+            const displaySeconds = String(seconds % 60).padStart(2, '0');
+
+            document.getElementById('timerDisplay').textContent = 
+                `${displayHours}:${displayMinutes}:${displaySeconds}`;
+            
+            updateSubmitButton();
+        }
+
+        // Update submit button state
+        function updateSubmitButton() {
+            const allCardsCompleted = completedCards.size === totalCards;
+            const elapsed = Date.now() - startTime;
+            const minutesElapsed = elapsed / 1000 / 60;
+            const timeRequirementMet = minutesElapsed >= 6;
+
+            // Update requirements display
+            const cardsReq = document.getElementById('req-cards');
+            const timeReq = document.getElementById('req-time');
+            const cardsStatus = document.getElementById('cards-status');
+            const timeStatus = document.getElementById('time-status');
+
+            if (allCardsCompleted) {
+                cardsReq.classList.add('met');
+                cardsReq.classList.remove('not-met');
+                cardsStatus.textContent = '✓';
+            } else {
+                cardsReq.classList.add('not-met');
+                cardsReq.classList.remove('met');
+                cardsStatus.textContent = '○';
+            }
+
+            if (timeRequirementMet) {
+                timeReq.classList.add('met');
+                timeReq.classList.remove('not-met');
+                timeStatus.textContent = '✓';
+            } else {
+                timeReq.classList.add('not-met');
+                timeReq.classList.remove('met');
+                timeStatus.textContent = '○';
+            }
+
+            // Enable/disable submit button
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = !(allCardsCompleted && timeRequirementMet);
+        }
+
+        // Start timer
+        timerInterval = setInterval(updateTimer, 1000);
+
+        // Card flip interaction
+        document.querySelectorAll('.card').forEach((card, index) => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('flipped');
+                
+                // Mark as completed when flipped to back
+                if (this.classList.contains('flipped')) {
+                    setTimeout(() => {
+                        completedCards.add(index);
+                        this.classList.add('completed');
+                        updateProgress();
+                        saveProgress();
+                    }, 300);
+                }
+            });
+        });
+
+        // Submit function
+        document.getElementById('submitBtn').addEventListener('click', async function() {
+            const staffName = document.getElementById('staffName').value.trim();
+            const trainingDate = document.getElementById('trainingDate').value;
+
+            if (!staffName) {
+                alert('Please enter your staff name before submitting.');
+                document.getElementById('staffName').focus();
+                return;
+            }
+
+            if (!trainingDate) {
+                alert('Please select a training date.');
+                document.getElementById('trainingDate').focus();
+                return;
+            }
+
+            const elapsed = Date.now() - startTime;
+            const minutes = Math.floor(elapsed / 1000 / 60);
+            const seconds = Math.floor((elapsed / 1000) % 60);
+            const studyTime = `${minutes} min ${seconds} sec`;
+
+            // Prepare data for Google Sheets
+            const data = {
+                staffName: staffName,
+                trainingDate: trainingDate,
+                studyTime: studyTime,
+                modulesCompleted: completedCards.size,
+                submittedAt: new Date().toISOString()
+            };
+
+            try {
+                // Google Apps Script Web App URL - REPLACE THIS WITH YOUR ACTUAL URL
+                const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                // Show success message
+                document.getElementById('successMessage').classList.add('show');
+                this.disabled = true;
+                this.textContent = 'Submitted ✓';
+                
+                // Clear saved progress
+                localStorage.removeItem('cashierProgressEN');
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                alert('There was an error submitting your training record. Please try again or contact your supervisor.');
+            }
+        });
+
+        // Reset progress
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all learning progress?')) {
+                completedCards.clear();
+                localStorage.removeItem('cashierProgressEN');
+                document.querySelectorAll('.card').forEach(card => {
+                    card.classList.remove('completed', 'flipped');
+                });
+                startTime = Date.now();
+                updateProgress();
+                document.getElementById('successMessage').classList.remove('show');
+                document.getElementById('submitBtn').textContent = 'Complete & Submit';
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+
+        // Load progress on page load
+        window.addEventListener('load', loadProgress);
+
+        // Clean up timer on page unload
+        window.addEventListener('beforeunload', function() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        });
+    </script>
+</body>
+</html>
